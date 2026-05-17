@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Guardian - AI-Powered Compliance Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Compliance Guardian</h1>
+            <p class="subtitle">AI-Powered Repository Compliance Checker</p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <h2>Analyze Repository</h2>
+                <form id="analyzeForm">
+                    <div class="form-group">
+                        <label for="repoUrl">GitHub Repository URL:</label>
+                        <input 
+                            type="text" 
+                            id="repoUrl" 
+                            name="repoUrl" 
+                            placeholder="https://github.com/username/repository"
+                            required
+                        >
+                    </div>
+                    <button type="submit" id="analyzeBtn" class="btn btn-primary">
+                        Analyze Repository
+                    </button>
+                </form>
+            </section>
+
+            <section class="status-section" id="statusSection" style="display: none;">
+                <h3>Analysis Status</h3>
+                <div class="status-content">
+                    <div class="spinner"></div>
+                    <p id="statusMessage">Initializing analysis...</p>
+                </div>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>Analysis Results</h2>
+                
+                <div class="summary-card">
+                    <h3>Executive Summary</h3>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Files Analyzed:</span>
+                            <span class="stat-value" id="filesAnalyzed">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Issues:</span>
+                            <span class="stat-value" id="totalIssues">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Risk Level:</span>
+                            <span class="stat-value risk-level" id="riskLevel">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="issues-breakdown">
+                    <h3>Issues by Severity</h3>
+                    <div class="severity-chart">
+                        <div class="severity-item critical">
+                            <span class="severity-label">Critical</span>
+                            <span class="severity-count" id="criticalCount">0</span>
+                        </div>
+                        <div class="severity-item high">
+                            <span class="severity-label">High</span>
+                            <span class="severity-count" id="highCount">0</span>
+                        </div>
+                        <div class="severity-item medium">
+                            <span class="severity-label">Medium</span>
+                            <span class="severity-count" id="mediumCount">0</span>
+                        </div>
+                        <div class="severity-item low">
+                            <span class="severity-label">Low</span>
+                            <span class="severity-count" id="lowCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="findings-section">
+                    <h3>Key Findings</h3>
+                    <div id="findingsList" class="findings-list">
+                        <!-- Findings will be populated here -->
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-secondary" id="downloadSummary">
+                        Download Summary Report
+                    </button>
+                    <button class="btn btn-secondary" id="downloadDetailed">
+                        Download Detailed Report
+                    </button>
+                </div>
+            </section>
+
+            <section class="error-section" id="errorSection" style="display: none;">
+                <h3>Error</h3>
+                <p id="errorMessage" class="error-message"></p>
+                <button class="btn btn-secondary" id="retryBtn">Try Again</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by Gemma 2B AI Model | Built with ❤️ for Compliance</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

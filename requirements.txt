@@ -1,0 +1,15 @@
+flask
+flask-cors
+flask-limiter
+flasgger
+gunicorn
+openai
+anthropic
+PyPDF2
+gitpython
+numpy
+pandas
+python-dotenv
+requests
+chardet
+colorlog
