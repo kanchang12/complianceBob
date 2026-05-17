@@ -130,7 +130,7 @@ def create_app(config=None):
     # Enable CORS
     CORS(app, resources={
         r"/api/*": {
-            "origins": ["http://localhost:*", "http://127.0.0.1:*"],
+            "origins": ["https://impossible-kitty-onewebonly-ffa22349.koyeb.app", "https://impossible-kitty-onewebonly-ffa22349.koyeb.app:*"],
             "methods": ["GET", "POST", "OPTIONS"],
             "allow_headers": ["Content-Type"]
         }
