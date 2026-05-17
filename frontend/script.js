@@ -1,7 +1,7 @@
 // Compliance Guardian Frontend JavaScript
 // Enhanced to work with complete Flask API backend
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://impossible-kitty-onewebonly-ffa22349.koyeb.app';
 
 // DOM Elements
 const analyzeForm = document.getElementById('analyzeForm');
