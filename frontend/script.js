@@ -233,45 +233,68 @@ function calculateRiskLevel(summary) {
 function displayFindings(results) {
     const findingsList = document.getElementById('findingsList');
     findingsList.innerHTML = '';
-    
-    // Get findings from compliance report
+
     const complianceReport = results.stages?.compliance?.report || {};
     const findings = complianceReport.findings || [];
-    
-    // Display top 10 findings
-    const topFindings = findings.slice(0, 10);
-    
-    if (topFindings.length === 0) {
+
+    // Policy violations first, then security findings
+    const policyFindings = findings.filter(f => f.type === 'policy_violation');
+    const securityFindings = findings.filter(f => f.type !== 'policy_violation');
+    const ordered = [...policyFindings, ...securityFindings];
+
+    if (ordered.length === 0) {
         findingsList.innerHTML = '<p class="no-findings">✓ No significant compliance issues found!</p>';
         return;
     }
-    
-    topFindings.forEach(finding => {
-        const findingItem = document.createElement('div');
-        findingItem.className = 'finding-item';
-        
-        const severity = finding.severity || 'info';
-        const severityClass = severity.toLowerCase();
-        
-        findingItem.innerHTML = `
-            <div class="finding-header">
-                <span class="finding-file">${truncatePath(finding.file)}</span>
-                <span class="finding-severity ${severityClass}">${severity.toUpperCase()}</span>
-            </div>
-            <div class="finding-description">${escapeHtml(finding.description || 'No description')}</div>
-            <div class="finding-line">Line ${finding.line || 'N/A'} | Type: ${finding.type || 'N/A'}</div>
-        `;
-        
-        findingsList.appendChild(findingItem);
-    });
-    
-    // Add "show more" message if there are more findings
-    if (findings.length > 10) {
+
+    // Section header: Regulatory
+    if (policyFindings.length > 0) {
+        const header = document.createElement('div');
+        header.className = 'findings-section-header compliance-header';
+        header.textContent = `Regulatory Policy Violations (${policyFindings.length})`;
+        findingsList.appendChild(header);
+
+        policyFindings.slice(0, 6).forEach(finding => {
+            findingsList.appendChild(buildFindingItem(finding));
+        });
+    }
+
+    // Section header: Security
+    if (securityFindings.length > 0) {
+        const header = document.createElement('div');
+        header.className = 'findings-section-header security-header';
+        header.textContent = `Security Findings (${securityFindings.length})`;
+        findingsList.appendChild(header);
+
+        securityFindings.slice(0, 6).forEach(finding => {
+            findingsList.appendChild(buildFindingItem(finding));
+        });
+    }
+
+    const shown = Math.min(policyFindings.length, 6) + Math.min(securityFindings.length, 6);
+    if (ordered.length > shown) {
         const moreMessage = document.createElement('p');
         moreMessage.className = 'more-findings';
-        moreMessage.textContent = `+ ${findings.length - 10} more findings (download full report to see all)`;
+        moreMessage.textContent = `+ ${ordered.length - shown} more findings (download full report to see all)`;
         findingsList.appendChild(moreMessage);
     }
+}
+
+function buildFindingItem(finding) {
+    const findingItem = document.createElement('div');
+    findingItem.className = 'finding-item';
+    const severity = finding.severity || 'info';
+    const regulation = finding.violated_regulations?.join(', ') || '';
+    findingItem.innerHTML = `
+        <div class="finding-header">
+            <span class="finding-file">${truncatePath(finding.file)}</span>
+            <span class="finding-severity ${severity.toLowerCase()}">${severity.toUpperCase()}</span>
+        </div>
+        <div class="finding-description">${escapeHtml(finding.description || 'No description')}</div>
+        ${regulation ? `<div class="finding-regulation">${escapeHtml(regulation)}</div>` : ''}
+        <div class="finding-line">Line ${finding.line || 'N/A'} | Type: ${finding.type || 'N/A'}</div>
+    `;
+    return findingItem;
 }
 
 /**
