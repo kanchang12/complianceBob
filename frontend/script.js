@@ -1,7 +1,7 @@
 // Compliance Guardian Frontend JavaScript
 // Enhanced to work with complete Flask API backend
 
-const API_BASE_URL = 'https://impossible-kitty-onewebonly-ffa22349.koyeb.app';
+const API_BASE_URL = window.location.origin;
 
 // DOM Elements
 const analyzeForm = document.getElementById('analyzeForm');
@@ -381,7 +381,11 @@ async function checkApiHealth() {
         }
     } catch (error) {
         console.error('API health check failed:', error);
+<<<<<<< HEAD
         console.warn('Make sure the Flask API is running on https://impossible-kitty-onewebonly-ffa22349.koyeb.app');
+=======
+        console.warn('Make sure the API server is running.');
+>>>>>>> 801f53f (Fix Koyeb deployment: single worker, DB schema init, CORS, API URL)
     }
 }
 

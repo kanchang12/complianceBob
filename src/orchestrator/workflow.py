@@ -58,9 +58,78 @@ class WorkflowOrchestrator:
         
         # Database connection
         self.db_path = self.config.get('db_path', 'database/compliance.db')
-        
+
+        self._ensure_db_schema()
         logger.info("All components initialized successfully")
     
+    def _ensure_db_schema(self):
+        """Create workflow tables if they don't exist — runs on every startup, safe to re-run."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.executescript('''
+            CREATE TABLE IF NOT EXISTS analyses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                repository_url TEXT NOT NULL,
+                status TEXT NOT NULL,
+                started_at TIMESTAMP,
+                completed_at TIMESTAMP,
+                total_files INTEGER DEFAULT 0,
+                total_findings INTEGER DEFAULT 0,
+                critical_count INTEGER DEFAULT 0,
+                high_count INTEGER DEFAULT 0,
+                medium_count INTEGER DEFAULT 0,
+                low_count INTEGER DEFAULT 0,
+                results_json TEXT
+            );
+            CREATE TABLE IF NOT EXISTS analysis_results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                repo_url TEXT NOT NULL,
+                repo_name TEXT,
+                analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status TEXT NOT NULL,
+                duration_seconds REAL,
+                files_analyzed INTEGER DEFAULT 0,
+                total_issues INTEGER DEFAULT 0,
+                critical_issues INTEGER DEFAULT 0,
+                high_issues INTEGER DEFAULT 0,
+                medium_issues INTEGER DEFAULT 0,
+                low_issues INTEGER DEFAULT 0,
+                risk_level TEXT,
+                results_json TEXT,
+                summary_text TEXT
+            );
+            CREATE TABLE IF NOT EXISTS findings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                analysis_id INTEGER,
+                file_path TEXT NOT NULL,
+                line_number INTEGER,
+                finding_type TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                pattern TEXT,
+                description TEXT,
+                code_snippet TEXT,
+                remediation TEXT,
+                regulation TEXT,
+                recommended_fix TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS compliance_rules (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                rule_name TEXT NOT NULL,
+                category TEXT NOT NULL,
+                regulation TEXT NOT NULL,
+                description TEXT NOT NULL,
+                severity TEXT DEFAULT 'medium',
+                pattern TEXT,
+                active BOOLEAN DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        ''')
+        conn.commit()
+        conn.close()
+        logger.info("Database schema verified/created")
+
     def process_compliance_documents(self, pdf_paths: List[str]) -> Dict:
         """
         Process compliance PDF documents and store in vector database

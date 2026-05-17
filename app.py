@@ -128,13 +128,7 @@ def create_app(config=None):
     app.config['JSON_SORT_KEYS'] = False
     
     # Enable CORS
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": ["https://impossible-kitty-onewebonly-ffa22349.koyeb.app", "https://impossible-kitty-onewebonly-ffa22349.koyeb.app:*"],
-            "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type"]
-        }
-    })
+    CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
     
     # Rate limiting
     limiter = Limiter(
