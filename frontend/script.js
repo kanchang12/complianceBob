@@ -381,7 +381,7 @@ async function checkApiHealth() {
         }
     } catch (error) {
         console.error('API health check failed:', error);
-        console.warn('Make sure the Flask API is running on http://localhost:5000');
+        console.warn('Make sure the Flask API is running on https://impossible-kitty-onewebonly-ffa22349.koyeb.app');
     }
 }
 
